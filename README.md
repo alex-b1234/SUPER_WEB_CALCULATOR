@@ -1,5 +1,5 @@
 ВЕЛИКИЙ КАЛЬКУЛЯТОР КОТОРЫЙ НАПИСАЛА АЛИСА AI С 5 ПОПЫТКИ
 
-и ешё нужны вот эти штуки:
+и ещё нужны вот эти штуки:
 
-pip install fastapi uvicorn jinja2 simpleeval
+pip install fastapi uvicorn jinja2
