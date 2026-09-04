@@ -26,20 +26,20 @@ async def calculate(request: Request):
         number = ""
         result = 0
         operation = '+'
-        for ch in expression+'+':
+        for ch in expression+' ':
             if ch not in allowed_chars:
                 return {"error": "Недопустимые символы"}
-            if ch in "0123456789":
+            if ch in "0123456789.":
                 number += ch
             else:
                 if operation == '+':
-                    result += int(number)
+                    result += float(number)
                 if operation == '-':
-                    result -= int(number)
+                    result -= float(number)
                 if operation == '*':
-                    result *= int(number)
+                    result *= float(number)
                 if operation == '/':
-                    result /= int(number)
+                    result /= float(number)
                 operation = ch
                 number = ""
 
