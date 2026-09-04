@@ -2,4 +2,4 @@
 
 и ешё нужны вот эти штуки:
 
-pip install fastapi uvicorn jinja2
+pip install fastapi uvicorn jinja2 simpleeval
