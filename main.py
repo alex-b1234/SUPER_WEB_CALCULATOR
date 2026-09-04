@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from simpleeval import simple_eval, NameNotDefined
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -22,16 +21,30 @@ async def calculate(request: Request):
         return {"error": "Поле expression отсутствует"}
 
     allowed_chars = set("0123456789+-*/(). ")
-    if any(ch not in allowed_chars for ch in expression):
-        return {"error": "Недопустимые символы"}
 
     try:
-        # simple_eval специально создан для безопасного вычисления выражений
-        result = simple_eval(expression)
+        number = ""
+        result = 0
+        operation = '+'
+        for ch in expression+'+':
+            if ch not in allowed_chars:
+                return {"error": "Недопустимые символы"}
+            if ch in "0123456789":
+                number += ch
+            else:
+                if operation == '+':
+                    result += int(number)
+                if operation == '-':
+                    result -= int(number)
+                if operation == '*':
+                    result *= int(number)
+                if operation == '/':
+                    result /= int(number)
+                operation = ch
+                number = ""
+
         return {"result": result}
     except ZeroDivisionError:
         return {"error": "Деление на ноль"}
-    except NameNotDefined:
-        return {"error": "Запрещённая функция или переменная"}
     except Exception as e:
         return {"error": str(e)}
