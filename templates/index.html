@@ -5,7 +5,7 @@
   <title>Калькулятор</title>
   <style>
     body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; margin: 0; }
-    .calculator { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 320px; }
+    .calculator { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 340px; }
     #display { width: 100%; height: 60px; font-size: 28px; text-align: right; border: none; background: #eee; padding: 8px; margin-bottom: 16px; border-radius: 8px; box-sizing: border-box; }
     .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     button { padding: 18px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; background: #fff; color: #333; }
@@ -23,7 +23,7 @@
       <button class="btn-clear" onclick="clearDisplay()">C</button>
       <button onclick="append('/')" class="btn-op">/</button>
       <button onclick="append('*')" class="btn-op">*</button>
-      <button onclick="backspace()" class="btn-op">←</button>
+      <button onclick="append('^')" class="btn-op">^</button>  <!-- Кнопка степени -->
 
       <button onclick="append('7')" class="btn-num">7</button>
       <button onclick="append('8')" class="btn-num">8</button>
@@ -38,9 +38,9 @@
       <button onclick="append('1')" class="btn-num">1</button>
       <button onclick="append('2')" class="btn-num">2</button>
       <button onclick="append('3')" class="btn-num">3</button>
+      <button onclick="append('0')" class="btn-num">0</button>
       <button onclick="sendToServer()" class="btn-eq">=</button>
 
-      <button onclick="append('0')" class="btn-num" style="grid-column: span 2;">0</button>
       <button onclick="append('.')" class="btn-num">.</button>
     </div>
   </div>
