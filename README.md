@@ -1,5 +1,9 @@
-ВЕЛИКИЙ КАЛЬКУЛЯТОР КОТОРЫЙ НАПИСАЛА АЛИСА AI С 5 ПОПЫТКИ
+ВЕЛИКИЙ КАЛЬКУЛЯТОР
 
-и ещё нужны вот эти штуки:
+нужны вот эти штуки:
 
-pip install fastapi uvicorn jinja2
+pip install fastapi uvicorn jinja2 pytest httpx
+------------------
+для запуска:
+
+uvicorn main:app --reload
