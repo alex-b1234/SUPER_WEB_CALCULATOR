@@ -73,7 +73,7 @@ def shunting_yard(tokens):
     return output
 
 def eval_rpn(rpn):
-    """Вычисляет постфиксное выражение (RPN) безопасно, без eval."""
+    """Вычисляет постфиксное выражение (RPN)"""
     stack = []
     for token in rpn:
         if isinstance(token, (int, float)):

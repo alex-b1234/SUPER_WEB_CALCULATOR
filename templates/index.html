@@ -10,9 +10,9 @@
     .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     button { padding: 18px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; background: #fff; color: #333; }
     button:active { transform: scale(0.98); }
-    .btn-num { background: #f5f5f5; }
+    .btn-num { background: #afafaf; }
     .btn-op { background: #ff9f43; color: white; }
-    .btn-eq { background: #1dd1a1; color: white; grid-column: span 2; }
+    .btn-eq { background: #1dd1a1; color: white; grid-column: span 1; }
     .btn-clear { background: #ee5253; color: white; }
   </style>
 </head>
@@ -38,9 +38,11 @@
       <button onclick="append('1')" class="btn-num">1</button>
       <button onclick="append('2')" class="btn-num">2</button>
       <button onclick="append('3')" class="btn-num">3</button>
-      <button onclick="append('0')" class="btn-num">0</button>
       <button onclick="sendToServer()" class="btn-eq">=</button>
 
+      <button onclick="append('(')" class="btn-num">(</button>
+      <button onclick="append('0')" class="btn-num">0</button>
+      <button onclick="append(')')" class="btn-num">)</button>
       <button onclick="append('.')" class="btn-num">.</button>
     </div>
   </div>
