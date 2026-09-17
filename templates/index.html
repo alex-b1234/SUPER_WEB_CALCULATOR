@@ -4,19 +4,24 @@
   <meta charset="UTF-8">
   <title>Калькулятор</title>
   <style>
-    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; margin: 0; }
-    .calculator { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 340px; }
-    #display { width: 100%; height: 60px; font-size: 28px; text-align: right; border: none; background: #eee; padding: 8px; margin-bottom: 16px; border-radius: 8px; box-sizing: border-box; }
+    body { font-family: cursive; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; margin: 0; }
+    .title { text-align: center }
+    .calculator { background: #d6c9c9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 340px; }
+    #display { font-family: cursive; width: 100%; height: 60px; font-size: 28px; text-align: right; border: none; background: #eee; padding: 8px; margin-bottom: 16px; border-radius: 8px; box-sizing: border-box; }
     .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     button { padding: 18px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; background: #fff; color: #333; }
     button:active { transform: scale(0.98); }
-    .btn-num { background: #afafaf; }
-    .btn-op { background: #ff9f43; color: white; }
-    .btn-eq { background: #1dd1a1; color: white; grid-column: span 1; }
-    .btn-clear { background: #ee5253; color: white; }
+    .btn-num { font-family: cursive; background: #afafaf; }
+    .btn-op { font-family: cursive; background: #28b48f; color: white; }
+    .btn-eq { font-family: cursive; background: #c2956b; color: white; grid-column: span 1; }
+    .btn-clear { font-family: sans-serif; background: #ee5253; color: white; }
   </style>
 </head>
 <body>
+  <div class="title">
+    <h1>СУПЕР МЕГА ВЕЛИКИЙ КАЛЬКУЛЯТОР</h1>
+    <p>САМЫЙ КРУТОЙ В МИРЕ</p>
+  </div>
   <div class="calculator">
     <input type="text" id="display" readonly />
     <div class="buttons">
@@ -45,6 +50,10 @@
       <button onclick="append(')')" class="btn-num">)</button>
       <button onclick="append('.')" class="btn-num">.</button>
     </div>
+  </div>
+  <div class="title">
+    <br>
+    сделал Санечка
   </div>
 
   <script>
