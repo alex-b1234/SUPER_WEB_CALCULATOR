@@ -1,4 +1,3 @@
-import re
 import operator
 
 PRECEDENCE = {
@@ -6,7 +5,8 @@ PRECEDENCE = {
     '-': 1,
     '*': 2,
     '/': 2,
-    '^': 3,
+    'u-': 3,
+    '^': 4,
 }
 
 RIGHT_ASSOC = {'^'}
@@ -17,23 +17,51 @@ OPS = {
     '*': operator.mul,
     '/': operator.truediv,
     '^': operator.pow,
+    'u-': None
 }
 
 def tokenize(expr: str):
     """Разбивает строку на токены: числа, операторы, скобки."""
-    token_pattern = r'\s*(?:(\d+(?:\.\d+)?)|([+\-*/^()]))\s*'
     tokens = []
-    pos = 0
-    while pos < len(expr):
-        m = re.match(token_pattern, expr[pos:])
-        if not m:
-            raise ValueError(f"Недопустимый символ в позиции {pos}: {expr[pos]}")
-        num, op = m.groups()
-        if num is not None:
-            tokens.append(float(num) if '.' in num else int(num))
-        elif op is not None:
-            tokens.append(op)
-        pos += m.end()
+    i = 0
+    n = len(expr)
+    while i < n:
+        ch = expr[i]
+        if ch.isspace():
+            i += 1
+            continue
+        if ch.isdigit() or ch == '.':
+            start = i
+            has_dot = (ch == '.')
+            i += 1
+            while i < n and (expr[i].isdigit() or (expr[i] == '.' and not has_dot)):
+                if expr[i] == '.':
+                    has_dot = True
+                i += 1
+            num_str = expr[start:i]
+            tokens.append(float(num_str) if '.' in num_str else int(num_str))
+            continue
+        if ch in '-':
+            is_unary = (
+                len(tokens) == 0 or
+                (isinstance(tokens[-1], str) and tokens[-1] in OPS) or
+                tokens[-1] == '(' or
+                tokens[-1] == 'u-'
+            )
+            if is_unary:
+                if ch == '-':
+                    tokens.append('u-')
+                i += 1
+                continue
+            else:
+                tokens.append(ch)
+                i += 1
+                continue
+        if ch in OPS or ch in '()':
+            tokens.append(ch)
+            i += 1
+            continue
+        raise ValueError(f"Недопустимый символ: {ch}")
     return tokens
 
 def shunting_yard(tokens):
@@ -78,6 +106,10 @@ def eval_rpn(rpn):
     for token in rpn:
         if isinstance(token, (int, float)):
             stack.append(token)
+        elif token == 'u-':
+            if not stack:
+                raise ValueError("Некорректное выражение")
+            stack.append(-stack.pop())
         elif token in OPS:
             if len(stack) < 2:
                 raise ValueError("Некорректное выражение")
