@@ -85,7 +85,7 @@
         const data = await res.json();
 
         if (data.error) {
-          display.value = 'Ошибка: ' + data.error;
+          display.value = 'Ошибка: ' + data.error.message;
         } else {
           display.value = String(data.result);
         }

@@ -41,6 +41,7 @@ client = TestClient(app)
     ("0/6", 0),
     ("150/15", 10),
     ("2+6/2", 5),
+    ("-10/2", -5),
 
     ("2^2", 4),
     ("3^2", 9),
@@ -70,5 +71,7 @@ def test_zero_division():
             json={"expression":'2/0'}
         )
     assert response.json() == {
-            "error":"Деление на ноль"
+            "error": {
+                "code": 400, "message": "Деление на ноль"
+                }
         }

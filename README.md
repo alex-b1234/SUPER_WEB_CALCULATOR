@@ -2,8 +2,8 @@
 
 нужны вот эти штуки:
 
-pip install fastapi uvicorn jinja2 pytest httpx
+pip install fastapi uvicorn jinja2 pytest httpx pathlib
 ------------------
 для запуска:
 
-uvicorn main:app --reload
+uvicorn \*папка с проектом\*.main:app --reload
