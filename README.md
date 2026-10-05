@@ -1,8 +1,8 @@
 ВЕЛИКИЙ КАЛЬКУЛЯТОР
 
-нужны вот эти штуки:
+Зависимости:
 
-pip install fastapi uvicorn jinja2 pytest httpx pathlib
+pip install -r requirements.txt
 ------------------
 для запуска:
 
