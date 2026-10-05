@@ -5,7 +5,7 @@ from pathlib import Path
 from shunting_yard import calculate_expression
 
 BASE_DIR = Path(__file__).resolve().parent
-TEMPLATES_DIR = BASE_DIR / "templates"
+TEMPLATES_DIR = str(BASE_DIR / "templates")
 app = FastAPI()
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
