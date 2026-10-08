@@ -19,15 +19,17 @@ async def calculate(request: Request, response: Response):
         data = await request.json()
     except Exception:
         response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": {"code": response.status_code, "message": "Некорректный JSON"}}
+        return {"error": {"code": response.status_code, "message": "НЕКОРРЕКТНЫЙ JSON"}}
 
     expression = data.get("expression", "")
     if not expression:
         response.status_code = status.HTTP_400_BAD_REQUEST
-        return {"error": {"code": response.status_code, "message": "Поле expression отсутствует"}}
+        return {"error": {"code": response.status_code, "message": "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"}}
 
     try:
         result = calculate_expression(expression)
+        if result == 67:
+            raise ValueError("67 ЗАПРЕЩЕНО")
         return {"result": result}
     except Exception as e:
         response.status_code = status.HTTP_400_BAD_REQUEST

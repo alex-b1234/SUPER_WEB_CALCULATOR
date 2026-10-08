@@ -4,17 +4,20 @@
   <meta charset="UTF-8">
   <title>Калькулятор</title>
   <style>
-    body { font-family: cursive; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: #f0f2f5; margin: 0; }
+    body { font-family: sans-serif; flex-direction: column; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; margin: 0; }
     .title { text-align: center }
-    .calculator { background: #d6c9c9; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 340px; }
-    #display { font-family: cursive; width: 100%; height: 60px; font-size: 28px; text-align: right; border: none; background: #eee; padding: 8px; margin-bottom: 16px; border-radius: 8px; box-sizing: border-box; }
+    .calculator { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 320px; }
+    input[type="text"] { width: 100%; padding: 15px; font-size: 20px; text-align: right; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
     .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    button { padding: 18px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; background: #fff; color: #333; }
-    button:active { transform: scale(0.98); }
-    .btn-num { font-family: cursive; background: #afafaf; }
-    .btn-op { font-family: cursive; background: #28b48f; color: white; }
-    .btn-eq { font-family: cursive; background: #c2956b; color: white; grid-column: span 1; }
-    .btn-clear { font-family: sans-serif; background: #ee5253; color: white; }
+    button { padding: 15px; font-size: 18px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #d0d0d0; }
+    button.operator { background: #ff9500; color: white; }
+    button.operator:hover { background: #e58a00; }
+    button.clear { background: #ff3b30; color: white; }
+    button.clear:hover { background: #e6362c; }
+    button.calculate { background: #42aaff; color: white; grid-column-start: 1; grid-column-end: 5; }
+    button.calculate:hover { background: #329aef; }
+    .error { color: red; font-size: 16px; margin-top: 10px; min-height: 20px; text-align: center; }
   </style>
 </head>
 <body>
@@ -23,32 +26,35 @@
     <p>САМЫЙ КРУТОЙ В МИРЕ</p>
   </div>
   <div class="calculator">
-    <input type="text" id="display" readonly />
+    <input type="text" id="expression" maxlength="100" placeholder="0">
+    <div class="error" id="error"></div>
     <div class="buttons">
-      <button class="btn-clear" onclick="clearDisplay()">C</button>
-      <button onclick="append('/')" class="btn-op">/</button>
-      <button onclick="append('*')" class="btn-op">*</button>
-      <button onclick="append('^')" class="btn-op">^</button>
+      <button class="clear" onclick="clearInput()">C</button>
+      <button onclick="appendToInput('(')">(</button>
+      <button onclick="appendToInput(')')">)</button>
+      <button class="operator" onclick="appendToInput('/')">/</button>
+            
+      <button onclick="appendToInput('7')">7</button>
+      <button onclick="appendToInput('8')">8</button>
+      <button onclick="appendToInput('9')">9</button>
+      <button class="operator" onclick="appendToInput('*')">×</button>
+            
+      <button onclick="appendToInput('4')">4</button>
+      <button onclick="appendToInput('5')">5</button>
+      <button onclick="appendToInput('6')">6</button>
+      <button class="operator" onclick="appendToInput('-')">−</button>
+  
+      <button onclick="appendToInput('1')">1</button>
+      <button onclick="appendToInput('2')">2</button>
+      <button onclick="appendToInput('3')">3</button>
+      <button class="operator" onclick="appendToInput('+')">+</button>
+            
+      <button onclick="appendToInput('0')">0</button>
+      <button onclick="appendToInput('.')">.</button>
+      <button onclick="backspace()">⌫</button>
+      <button class="operator" onclick="appendToInput('^')">^</button>
 
-      <button onclick="append('7')" class="btn-num">7</button>
-      <button onclick="append('8')" class="btn-num">8</button>
-      <button onclick="append('9')" class="btn-num">9</button>
-      <button onclick="append('-')" class="btn-op">-</button>
-
-      <button onclick="append('4')" class="btn-num">4</button>
-      <button onclick="append('5')" class="btn-num">5</button>
-      <button onclick="append('6')" class="btn-num">6</button>
-      <button onclick="append('+')" class="btn-op">+</button>
-
-      <button onclick="append('1')" class="btn-num">1</button>
-      <button onclick="append('2')" class="btn-num">2</button>
-      <button onclick="append('3')" class="btn-num">3</button>
-      <button onclick="sendToServer()" class="btn-eq">=</button>
-
-      <button onclick="append('(')" class="btn-num">(</button>
-      <button onclick="append('0')" class="btn-num">0</button>
-      <button onclick="append(')')" class="btn-num">)</button>
-      <button onclick="append('.')" class="btn-num">.</button>
+      <button class="calculate" onclick="calculate()">ВЫЧИСЛЕНИЕ!</button>
     </div>
   </div>
   <div class="title">
@@ -57,41 +63,139 @@
   </div>
 
   <script>
-    const display = document.getElementById('display');
+    const input = document.getElementById('expression');
+    const errorDiv = document.getElementById('error');
 
-    function append(val) {
-      display.value += val;
+    function validateAndClean(val) {
+      if (val === '') return '';
+
+      val = val.replace(/[^0-9+\-*/().]/g, '');
+      val = val.replace(/[+\-*/]{2,}/g, m => m[m.length - 1]);
+      val = val.replace(/([+\-*/(]|^)\./g, '\$10.');
+      val = val.replace(/\b0{2,}(?=[0-9])/g, '0');
+      val = val.replace(/\([+*/^]+/g, '(');
+      val = val.replace(/\.{2,}/g, '.');
+            
+      let result = '';
+      for (let i = 0; i < val.length; i++) {
+        const char = val[i];
+        if (/[0-9]/.test(char)) {
+          result += char;
+        } else if (char === '.') {
+          let j = i - 1;
+          let foundOperatorOrBracket = false;
+          let foundDot = false;
+                    
+          while (j >= 0) {
+            if (/[+\-*/()]/.test(val[j])) {
+              foundOperatorOrBracket = true;
+              break;
+            }
+            if (val[j] === '.') {
+              foundDot = true;
+              break;
+            }
+            j--;
+          }
+                    
+          if (!foundDot) {
+            result += char;
+          }
+        } else {
+          result += char;
+        }
+      }
+      val = result;
+
+      let openCount = 0;
+      let finalVal = '';
+      for (let char of val) {
+        if (char === '(') {
+          openCount++;
+          finalVal += char;
+        } else if (char === ')') {
+          if (openCount > 0) {
+            openCount--;
+            finalVal += char;
+          }
+        } else {
+          finalVal += char;
+        }
+      }
+            
+      if (!/[\d(]/.test(finalVal)) {
+        return '';
+      }
+
+      return finalVal;
     }
 
-    function clearDisplay() {
-      display.value = '';
+    input.addEventListener('input', () => {
+      errorDiv.textContent = '';
+      let val = input.value;
+      const cleaned = validateAndClean(val);
+      if (cleaned !== val) {
+        input.value = cleaned;
+      }
+    });
+
+    function appendToInput(char) {
+      errorDiv.textContent = '';
+      let val = input.value;
+      if (val === '' && !['(', ')'].includes(char)) {
+        val = '';
+      } else if (val === '' && ['(', ')'].includes(char)) {
+        val = '';
+      }
+
+      val += char;
+      const cleaned = validateAndClean(val);
+      input.value = cleaned;
+    }
+
+    function clearInput() {
+      errorDiv.textContent = '';
+      input.value = '';
     }
 
     function backspace() {
-      display.value = display.value.slice(0, -1);
+      errorDiv.textContent = '';
+      let val = input.value;
+      if (val.length > 1) {
+        val = val.slice(0, -1);
+      } else {
+        val = '';
+      }
+      const cleaned = validateAndClean(val);
+      input.value = cleaned;
     }
 
-    async function sendToServer() {
-      const expr = display.value.trim();
-      if (!expr) return;
+    async function calculate() {
+      const expression = input.value;
+      errorDiv.textContent = '';
+
+      if (!expression) {
+        errorDiv.textContent = 'Введите выражение';
+        return;
+      }
 
       try {
-        const res = await fetch('/api/calculate', {
+        const response = await fetch('/api/calculate', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({expression: expr})
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ expression: expression })
         });
 
-        const data = await res.json();
+        const data = await response.json();
 
-        if (data.error) {
-          display.value = 'Ошибка: ' + data.error.message;
-        } else {
-          display.value = String(data.result);
+        if (!response.ok) {
+          throw new Error(data.error?.message || 'Ошибка сервера');
         }
+
+        input.value = String(data.result);
       } catch (err) {
+        errorDiv.textContent = err.message;
         console.error(err);
-        display.value = 'Ошибка соединения';
       }
     }
   </script>

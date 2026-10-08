@@ -61,7 +61,7 @@ def tokenize(expr: str):
             tokens.append(ch)
             i += 1
             continue
-        raise ValueError(f"Недопустимый символ: {ch}")
+        raise ValueError(f"НЕДОПУСТИМЫЙ СИМВОЛ: {ch}")
     return tokens
 
 def shunting_yard(tokens):
@@ -87,15 +87,15 @@ def shunting_yard(tokens):
             while stack and stack[-1] != '(':
                 output.append(stack.pop())
             if not stack:
-                raise ValueError("Несбалансированные скобки")
+                raise ValueError("НЕСБАЛАНСИРОВАННЫЕ СКОБКИ")
             stack.pop()
         else:
-            raise ValueError(f"Неизвестный токен: {token}")
+            raise ValueError(f"НЕИЗВЕСТНЫЙ ТОКЕН: {token}")
 
     while stack:
         top = stack.pop()
         if top in '()':
-            raise ValueError("Несбалансированные скобки")
+            raise ValueError("НЕСБАЛАНСИРОВАННЫЕ СКОБКИ")
         output.append(top)
 
     return output
@@ -108,21 +108,21 @@ def eval_rpn(rpn):
             stack.append(token)
         elif token == 'u-':
             if not stack:
-                raise ValueError("Некорректное выражение")
+                raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
             stack.append(-stack.pop())
         elif token in OPS:
             if len(stack) < 2:
-                raise ValueError("Некорректное выражение")
+                raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
             b = stack.pop()
             a = stack.pop()
             if token == '/' and b == 0:
-                raise ZeroDivisionError("Деление на ноль")
+                raise ZeroDivisionError("НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ")
             res = OPS[token](a, b)
             stack.append(res)
         else:
-            raise ValueError(f"Неизвестный токен в RPN: {token}")
+            raise ValueError(f"НЕИЗВЕСТНЫЙ ТОКЕН: {token}")
     if len(stack) != 1:
-        raise ValueError("Некорректное выражение")
+        raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
     return stack[0]
 
 def calculate_expression(expr: str) -> float:
