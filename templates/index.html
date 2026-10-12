@@ -69,7 +69,7 @@
     function validateAndClean(val) {
       if (val === '') return '';
 
-      val = val.replace(/[^0-9+\-*/().]/g, '');
+      val = val.replace(/[^0-9+\-*/().^]/g, '');
       val = val.replace(/[+\-*/]{2,}/g, m => m[m.length - 1]);
       val = val.replace(/([+\-*/(]|^)\./g, '\$10.');
       val = val.replace(/\b0{2,}(?=[0-9])/g, '0');

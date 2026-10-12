@@ -1,4 +1,5 @@
 import operator
+import re
 
 PRECEDENCE = {
     '+': 1,
@@ -19,6 +20,25 @@ OPS = {
     '^': operator.pow,
     'u-': None
 }
+
+MAX_LEN = 100
+MAX_DIGITS = 30
+MAX_POW = 20
+
+def validate_expression(expr: str) -> str:
+    if len(expr) > MAX_LEN:
+        raise ValueError(f"МАКС. СИМВОЛОВ В ВЫРАЖЕНИИ: {MAX_LEN}")
+
+    numbers = re.findall(r'-?\d+(?:\.\d+)?', expr)
+    for n in numbers:
+        digits_only = n.replace('-', '').replace('.', '')
+        if len(digits_only) > MAX_DIGITS:
+            raise ValueError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
+    powers = re.findall(r'\^(\d+)', expr)
+    for p in powers:
+        if int(p) > MAX_POW:
+            raise ValueError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
+    return
 
 def tokenize(expr: str):
     """Разбивает строку на токены: числа, операторы, скобки."""
@@ -127,6 +147,7 @@ def eval_rpn(rpn):
 
 def calculate_expression(expr: str) -> float:
     """Главная функция: парсит, конвертирует, считает."""
+    validate_expression(expr)
     tokens = tokenize(expr)
     rpn = shunting_yard(tokens)
     return eval_rpn(rpn)
