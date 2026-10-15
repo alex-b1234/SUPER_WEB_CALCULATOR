@@ -21,23 +21,23 @@ OPS = {
     'u-': None
 }
 
-MAX_LEN = 100
-MAX_DIGITS = 30
-MAX_POW = 20
+MAX_LEN = 70
+MAX_DIGITS = 15
+MAX_POW = 15
 
 def validate_expression(expr: str) -> str:
     if len(expr) > MAX_LEN:
-        raise ValueError(f"МАКС. СИМВОЛОВ В ВЫРАЖЕНИИ: {MAX_LEN}")
+        raise OverflowError(f"МАКС. СИМВОЛОВ В ВЫРАЖЕНИИ: {MAX_LEN}")
 
     numbers = re.findall(r'-?\d+(?:\.\d+)?', expr)
     for n in numbers:
         digits_only = n.replace('-', '').replace('.', '')
         if len(digits_only) > MAX_DIGITS:
-            raise ValueError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
+            raise OverflowError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
     powers = re.findall(r'\^(\d+)', expr)
     for p in powers:
         if int(p) > MAX_POW:
-            raise ValueError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
+            raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
     return
 
 def tokenize(expr: str):

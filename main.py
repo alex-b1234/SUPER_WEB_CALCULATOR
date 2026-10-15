@@ -17,6 +17,8 @@ async def home(request: Request):
 async def calculate(request: Request, response: Response):
     try:
         data = await request.json()
+        if not isinstance(data, dict):
+            raise TypeError
     except Exception:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {"error": {"code": response.status_code, "message": "НЕКОРРЕКТНЫЙ JSON"}}
@@ -28,8 +30,6 @@ async def calculate(request: Request, response: Response):
 
     try:
         result = calculate_expression(expression)
-        if result == 67:
-            raise ValueError("67 ЗАПРЕЩЕНО")
         return {"result": result}
     except Exception as e:
         response.status_code = status.HTTP_400_BAD_REQUEST
