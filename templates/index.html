@@ -69,12 +69,13 @@
     function validateAndClean(val) {
       if (val === '') return '';
 
-      val = val.replace(/[^0-9+\-*/().^]/g, '');
+      val = val.replace(/[^0-9+\-*/().^e]/g, '');
       val = val.replace(/[+\-*/]{2,}/g, m => m[m.length - 1]);
       val = val.replace(/([+\-*/(]|^)\./g, '\$10.');
       val = val.replace(/^0+(?=[0-9])/, '');
       val = val.replace(/\([+*/^]+/g, '(');
       val = val.replace(/\.{2,}/g, '.');
+      val = val.replace(/[eE][^\d+\-]/g, 'e');
             
       let result = '';
       for (let i = 0; i < val.length; i++) {
@@ -100,6 +101,11 @@
                     
           if (!foundDot) {
             result += char;
+          }
+        } else if (/[eE]/.test(char)) {
+          const prev = val[i - 1];
+          if (prev && /[0-9]/.test(prev)) {
+            result += char.toLowerCase();
           }
         } else {
           result += char;

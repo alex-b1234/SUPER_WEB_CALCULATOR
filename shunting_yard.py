@@ -24,45 +24,54 @@ OPS = {
 MAX_LEN = 70
 MAX_DIGITS = 15
 MAX_POW = 15
+MAX_EXP = 15
 
-def validate_expression(expr: str) -> str:
+
+def validate_expression(expr: str) -> None:
     if len(expr) > MAX_LEN:
         raise OverflowError(f"МАКС. СИМВОЛОВ В ВЫРАЖЕНИИ: {MAX_LEN}")
 
-    numbers = re.findall(r'-?\d+(?:\.\d+)?', expr)
-    for n in numbers:
-        digits_only = n.replace('-', '').replace('.', '')
-        if len(digits_only) > MAX_DIGITS:
-            raise OverflowError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
-    numbers = re.search(r'\d\(', expr)
-    numbers2 = re.search(r'[+\-*/^]\)', expr)
-    if numbers is not None or numbers2 is not None:
+    if re.search(r'\d\(', expr) or re.search(r'[+\-*/^]\)', expr):
         raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
-    return
+
 
 def tokenize(expr: str):
-    """Разбивает строку на токены: числа, операторы, скобки."""
     tokens = []
     i = 0
     n = len(expr)
+
+    number_pattern = re.compile(r"""
+        (?:
+            \d+(?:\.\d*)?
+            | \.\d+
+        )
+        (?:[eE][+-]?\d+)?
+    """, re.VERBOSE)
+
     while i < n:
         ch = expr[i]
         if ch.isspace():
             i += 1
             continue
-        if ch.isdigit() or ch == '.':
-            if tokens:
-                if str(tokens[-1]).isdigit():
-                    raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
-            start = i
-            has_dot = (ch == '.')
-            i += 1
-            while i < n and (expr[i].isdigit() or (expr[i] == '.' and not has_dot)):
-                if expr[i] == '.':
-                    has_dot = True
-                i += 1
-            num_str = expr[start:i]
-            tokens.append(float(num_str) if '.' in num_str else int(num_str))
+        match = number_pattern.match(expr, i)
+        if match:
+            num_str = match.group(0)
+            try:
+                num = float(num_str)
+            except ValueError:
+                raise ValueError(f"НЕКОРРЕКТНОЕ ЧИСЛО: {num_str}")
+            digits_only = re.sub(r'[^\d]', '', num_str)
+            if len(digits_only) > MAX_DIGITS:
+                raise OverflowError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
+            exp_match = re.search(r'[eE]([+-]?\d+)', num_str)
+            if exp_match:
+                exp_value = int(exp_match.group(1))
+                if abs(exp_value) > MAX_EXP:
+                    raise OverflowError(
+                        f"МАКС. ЭКСПОНЕНТА: {MAX_EXP}"
+                    )
+            tokens.append(num)
+            i = match.end()
             continue
         if ch == '-':
             is_unary = (
@@ -72,8 +81,7 @@ def tokenize(expr: str):
                 tokens[-1] == 'u-'
             )
             if is_unary:
-                if ch == '-':
-                    tokens.append('u-')
+                tokens.append('u-')
                 i += 1
                 continue
             else:
@@ -88,10 +96,8 @@ def tokenize(expr: str):
     return tokens
 
 def shunting_yard(tokens):
-    """Преобразует инфиксные токены в постфиксные (RPN)."""
     output = []
     stack = []
-
     for token in tokens:
         if isinstance(token, (int, float)):
             output.append(token)
@@ -114,17 +120,14 @@ def shunting_yard(tokens):
             stack.pop()
         else:
             raise ValueError(f"НЕИЗВЕСТНЫЙ ТОКЕН: {token}")
-
     while stack:
         top = stack.pop()
         if top in '()':
             raise ValueError("НЕСБАЛАНСИРОВАННЫЕ СКОБКИ")
         output.append(top)
-
     return output
 
 def eval_rpn(rpn):
-    """Вычисляет постфиксное выражение (RPN)"""
     stack = []
     for token in rpn:
         if isinstance(token, (int, float)):
@@ -141,9 +144,9 @@ def eval_rpn(rpn):
             if token == '/' and b == 0:
                 raise ZeroDivisionError("НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ")
             if token == '^':
-                if b > MAX_POW:
+                if abs(b) > MAX_POW:
                     raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
-                if a < 0 and b % 1 != 0:  # если основание < 0 и степень дробная
+                if a < 0 and b % 1 != 0:
                     raise ValueError("КОМПЛЕКСНЫЕ ЧИСЛА НЕ ПОДДЕРЖИВАЮТСЯ")
             res = OPS[token](a, b)
             stack.append(res)
@@ -154,7 +157,6 @@ def eval_rpn(rpn):
     return stack[0]
 
 def calculate_expression(expr: str) -> float:
-    """Главная функция: парсит, конвертирует, считает."""
     validate_expression(expr)
     tokens = tokenize(expr)
     rpn = shunting_yard(tokens)
