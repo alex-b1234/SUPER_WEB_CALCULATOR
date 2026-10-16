@@ -29,7 +29,7 @@ async def calculate(request: Request, response: Response):
         return {"error": {"code": response.status_code, "message": "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"}}
 
     try:
-        result = calculate_expression(expression)
+        result = calculate_expression(expression.replace(" ",""))
         formatted_res = f"{result:.15f}".rstrip("0").rstrip(".") or "0"
         return {"result": formatted_res}
     except Exception as e:
