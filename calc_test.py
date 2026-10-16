@@ -12,7 +12,7 @@ class TestApi:
             json={"expression":"(1+2)*3-4/8+5.6+9^7"}
         )
         assert response.json() == {
-            "result":4782983.1
+            "result": '4782983.099999999627471'
         } and response.status_code == 200
 
     def test_index(self):
