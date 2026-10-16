@@ -30,7 +30,7 @@ async def calculate(request: Request, response: Response):
 
     try:
         result = calculate_expression(expression.replace(" ",""))
-        formatted_res = f"{result:.15f}".rstrip("0").rstrip(".") or "0"
+        formatted_res = f"{result:.10f}".rstrip("0").rstrip(".") or "0"
         return {"result": formatted_res}
     except Exception as e:
         response.status_code = status.HTTP_400_BAD_REQUEST
