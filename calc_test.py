@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-from shunting_yard import tokenize, shunting_yard, eval_rpn, calculate_expression
+from shunting_yard import tokenize, shunting_yard, calculate_expression
 
 client = TestClient(app)
 
@@ -15,10 +15,17 @@ class TestApi:
             "result":4782983.1
         } and response.status_code == 200
 
+    def test_index(self):
+        response = client.get(
+            "/"
+        )
+        assert response.status_code == 200
+
     @pytest.mark.parametrize("error_json, error_code, error_message", [
         ({"expression":"2/0"}, 400, "НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ"),
         ({}, 400, "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"),
         ((), 400, "НЕКОРРЕКТНЫЙ JSON"),
+        ("{\"a\": 2, \"b\": 3, \"op\": \"+\"", 400, "НЕКОРРЕКТНЫЙ JSON"),
         ({"expression":""}, 400, "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"),
         ({"expression":"1+"}, 400, "НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ"),
         ({"expression":"2/0"}, 400, "НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ"),
