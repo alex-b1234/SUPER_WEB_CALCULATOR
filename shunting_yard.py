@@ -51,6 +51,9 @@ def tokenize(expr: str):
             i += 1
             continue
         if ch.isdigit() or ch == '.':
+            if tokens:
+                if str(tokens[-1]).isdigit():
+                    raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
             start = i
             has_dot = (ch == '.')
             i += 1
