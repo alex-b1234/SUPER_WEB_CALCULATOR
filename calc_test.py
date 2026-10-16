@@ -27,8 +27,10 @@ class TestApi:
         ("{\"a\": 2, \"b\": 3, \"op\": \"+\"", 400, "НЕКОРРЕКТНЫЙ JSON"),
         ({"expression":""}, 400, "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"),
         ({"expression":"1+"}, 400, "НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ"),
+        ({"expression":"2(3+)"}, 400, "НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ"),
         ({"expression":"2/0"}, 400, "НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ"),
         ({"expression":"абвгд"}, 400, "НЕДОПУСТИМЫЙ СИМВОЛ: а"),
+        ({"expression":"(-3)^0.2"}, 400, "КОМПЛЕКСНЫЕ ЧИСЛА НЕ ПОДДЕРЖИВАЮТСЯ"),
     ])
     def test_errors(self, error_json, error_code, error_message):
         response = client.post(

@@ -87,7 +87,7 @@
           let foundDot = false;
                     
           while (j >= 0) {
-            if (/[+\-*/()]/.test(val[j])) {
+            if (/[+\-*/()\^]/.test(val[j])) {
               foundOperatorOrBracket = true;
               break;
             }

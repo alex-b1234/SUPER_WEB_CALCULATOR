@@ -34,6 +34,10 @@ def validate_expression(expr: str) -> str:
         digits_only = n.replace('-', '').replace('.', '')
         if len(digits_only) > MAX_DIGITS:
             raise OverflowError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
+    numbers = re.search(r'\d\(', expr)
+    numbers2 = re.search(r'[+\-*/^]\)', expr)
+    if numbers is not None or numbers2 is not None:
+        raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
     return
 
 def tokenize(expr: str):
@@ -57,7 +61,7 @@ def tokenize(expr: str):
             num_str = expr[start:i]
             tokens.append(float(num_str) if '.' in num_str else int(num_str))
             continue
-        if ch in '-':
+        if ch == '-':
             is_unary = (
                 len(tokens) == 0 or
                 (isinstance(tokens[-1], str) and tokens[-1] in OPS) or
@@ -102,7 +106,7 @@ def shunting_yard(tokens):
         elif token == ')':
             while stack and stack[-1] != '(':
                 output.append(stack.pop())
-            if not stack:
+            if not stack or stack[-1] != '(':
                 raise ValueError("НЕСБАЛАНСИРОВАННЫЕ СКОБКИ")
             stack.pop()
         else:
@@ -133,8 +137,11 @@ def eval_rpn(rpn):
             a = stack.pop()
             if token == '/' and b == 0:
                 raise ZeroDivisionError("НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ")
-            if token == '^' and b > MAX_POW:
-                raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
+            if token == '^':
+                if b > MAX_POW:
+                    raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
+                if a < 0 and b % 1 != 0:  # если основание < 0 и степень дробная
+                    raise ValueError("КОМПЛЕКСНЫЕ ЧИСЛА НЕ ПОДДЕРЖИВАЮТСЯ")
             res = OPS[token](a, b)
             stack.append(res)
         else:

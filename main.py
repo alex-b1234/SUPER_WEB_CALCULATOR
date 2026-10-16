@@ -29,7 +29,7 @@ async def calculate(request: Request, response: Response):
         return {"error": {"code": response.status_code, "message": "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"}}
 
     try:
-        result = calculate_expression(expression.replace(" ",""))
+        result = calculate_expression(expression)
         return {"result": result}
     except Exception as e:
         response.status_code = status.HTTP_400_BAD_REQUEST
