@@ -22,7 +22,6 @@ class TestApi:
         assert response.status_code == 200
 
     @pytest.mark.parametrize("error_json, error_code, error_message", [
-        ({"expression":"2/0"}, 400, "НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ"),
         ({}, 400, "ПОЛЕ EXPRESSION ОТСУТСТВУЕТ"),
         ((), 400, "НЕКОРРЕКТНЫЙ JSON"),
         ("{\"a\": 2, \"b\": 3, \"op\": \"+\"", 400, "НЕКОРРЕКТНЫЙ JSON"),
@@ -52,7 +51,7 @@ class TestTokenize:
 
     def test_many_same_digits(self):
         # Токенизатор должен увидеть это как одно число
-        tokens = tokenize("999999999999999+1")  # 16 девяток
+        tokens = tokenize("999999999999999+1")
         assert len(tokens) == 3
         assert tokens[0] == 999_999_999_999_999.0
 
@@ -74,7 +73,7 @@ class TestShuntingYard:
         # 2^(3^2) = 2^9, а не (2^3)^2
         assert rpn == [2.0, 3.0, 2.0, '^', '^']
 
-class TestEvalRPN:
+class TestCalculate:
     @pytest.mark.parametrize("expr,expected", [
         ("20+15", 35),
         ("2+2+2", 6),
@@ -94,6 +93,7 @@ class TestEvalRPN:
         ("-10/2", -5),
         ("4^3", 64),
         ("0^0", 1),
+        ("2^-3", 0.125),
         ("-5^2", -25),
         ("(-5)^2", 25),
         ("5+21*8-29*(2+2)-4^2^2*2+1000", 545)

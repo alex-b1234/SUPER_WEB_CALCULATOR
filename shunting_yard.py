@@ -6,11 +6,11 @@ PRECEDENCE = {
     '-': 1,
     '*': 2,
     '/': 2,
-    'u-': 3,
-    '^': 4,
+    '^': 3,
+    'u-': 3
 }
 
-RIGHT_ASSOC = {'^'}
+RIGHT_ASSOC = {'^', 'u-'}
 
 OPS = {
     '+': operator.add,
