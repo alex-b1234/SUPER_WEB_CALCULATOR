@@ -34,10 +34,6 @@ def validate_expression(expr: str) -> str:
         digits_only = n.replace('-', '').replace('.', '')
         if len(digits_only) > MAX_DIGITS:
             raise OverflowError(f"МАКС. ЦИФР В ЧИСЛЕ: {MAX_DIGITS}")
-    powers = re.findall(r'\^(\d+)', expr)
-    for p in powers:
-        if int(p) > MAX_POW:
-            raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
     return
 
 def tokenize(expr: str):
@@ -137,6 +133,8 @@ def eval_rpn(rpn):
             a = stack.pop()
             if token == '/' and b == 0:
                 raise ZeroDivisionError("НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ")
+            if token == '^' and b > MAX_POW:
+                raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
             res = OPS[token](a, b)
             stack.append(res)
         else:
