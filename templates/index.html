@@ -66,11 +66,18 @@
     const input = document.getElementById('expression');
     const errorDiv = document.getElementById('error');
 
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        calculate();
+      }
+    });
+
     function validateAndClean(val, justTypedDigit = false) {
       if (val === '') return '';
 
       val = val.replace(/[^0-9+\-*/().^e]/g, '');
-      val = val.replace(/[+\-*/]{2,}/g, m => m[m.length - 1]);
+      val = val.replace(/[+\*/]{2,}/g, m => m[m.length - 1]);
       val = val.replace(/([+\-*/(]|^)\./g, '\$10.');
       val = val.replace(/^0+(?=[0-9])/, '');
       val = val.replace(/\([+*/^]+/g, '(');
@@ -140,7 +147,7 @@
         }
       }
             
-      if (!/[\d(]/.test(finalVal)) {
+      if (!/[\d(-]/.test(finalVal)) {
         return '';
       }
 

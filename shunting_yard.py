@@ -26,7 +26,7 @@ MAX_DIGITS = 15
 MAX_POW = 15
 MAX_EXP = 15
 MAX_BASE = 100000    # макс. основание степени
-MAX_RESULT = 1e12    # макс. результат операции
+MAX_RESULT = 1e12
 
 
 def validate_expression(expr: str) -> None:
@@ -145,14 +145,16 @@ def eval_rpn(rpn):
             a = stack.pop()
             if token == '/' and b == 0:
                 raise ZeroDivisionError("НЕЛЬЗЯ ДЕЛИТЬ НА НОЛЬ")
-            if token == '^':
+            elif token == '^':
                 if abs(b) > MAX_POW:
                     raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
                 if abs(a) > MAX_BASE:
-                    raise OverflowError(f"РЕЗУЛЬТАТ СЛИШКОМ БОЛЬШОЙ")
+                    raise OverflowError("РЕЗУЛЬТАТ СЛИШКОМ БОЛЬШОЙ")
                 if a < 0 and b % 1 != 0:
                     raise ValueError("КОМПЛЕКСНЫЕ ЧИСЛА НЕ ПОДДЕРЖИВАЮТСЯ")
             res = OPS[token](a, b)
+            if abs(res) > MAX_RESULT:
+                raise OverflowError("РЕЗУЛЬТАТ СЛИШКОМ БОЛЬШОЙ")
             stack.append(res)
         else:
             raise ValueError(f"НЕИЗВЕСТНЫЙ ТОКЕН: {token}")
