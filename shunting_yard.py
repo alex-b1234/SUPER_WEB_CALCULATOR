@@ -58,6 +58,11 @@ def tokenize(expr: str):
         match = number_pattern.match(expr, i)
         if match:
             num_str = match.group(0)
+
+            next_idx = match.end()
+            if next_idx < n and expr[next_idx] == '.':
+                raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
+            
             try:
                 num = float(num_str)
             except ValueError:

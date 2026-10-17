@@ -70,6 +70,9 @@
       if (e.key === 'Enter') {
         e.preventDefault();
         calculate();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        clearInput();
       }
     });
 
