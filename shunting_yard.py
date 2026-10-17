@@ -25,15 +25,17 @@ MAX_LEN = 70
 MAX_DIGITS = 15
 MAX_POW = 15
 MAX_EXP = 15
+MAX_BASE = 100000    # макс. основание степени
+MAX_RESULT = 1e12    # макс. результат операции
 
 
 def validate_expression(expr: str) -> None:
     if len(expr) > MAX_LEN:
         raise OverflowError(f"МАКС. СИМВОЛОВ В ВЫРАЖЕНИИ: {MAX_LEN}")
-
     if re.search(r'\d\(', expr) or re.search(r'[+\-*/^]\)', expr):
         raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
-
+    if '()' in expr:
+        raise ValueError("НЕКОРРЕКТНОЕ ВЫРАЖЕНИЕ")
 
 def tokenize(expr: str):
     tokens = []
@@ -146,6 +148,8 @@ def eval_rpn(rpn):
             if token == '^':
                 if abs(b) > MAX_POW:
                     raise OverflowError(f"МАКС. ЗНАЧЕНИЕ СТЕПЕНИ: {MAX_POW}")
+                if abs(a) > MAX_BASE:
+                    raise OverflowError(f"РЕЗУЛЬТАТ СЛИШКОМ БОЛЬШОЙ")
                 if a < 0 and b % 1 != 0:
                     raise ValueError("КОМПЛЕКСНЫЕ ЧИСЛА НЕ ПОДДЕРЖИВАЮТСЯ")
             res = OPS[token](a, b)

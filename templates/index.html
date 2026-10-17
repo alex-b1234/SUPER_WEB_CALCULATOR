@@ -66,7 +66,7 @@
     const input = document.getElementById('expression');
     const errorDiv = document.getElementById('error');
 
-    function validateAndClean(val) {
+    function validateAndClean(val, justTypedDigit = false) {
       if (val === '') return '';
 
       val = val.replace(/[^0-9+\-*/().^e]/g, '');
@@ -76,7 +76,18 @@
       val = val.replace(/\([+*/^]+/g, '(');
       val = val.replace(/\.{2,}/g, '.');
       val = val.replace(/[eE][^\d+\-]/g, 'e');
-            
+
+      if (justTypedDigit && val.length >= 2) {
+        const lastChar = val[val.length - 1];
+        const secondLast = val[val.length - 2];
+        if (secondLast === '0') {
+          const thirdLast = val.length >= 3 ? val[val.length - 3] : '';
+          if (!/\d/.test(thirdLast) && thirdLast !== '.') {
+            val = val.slice(0, -2) + lastChar;
+          }
+        }
+      }
+
       let result = '';
       for (let i = 0; i < val.length; i++) {
         const char = val[i];
@@ -155,7 +166,8 @@
       }
 
       val += char;
-      const cleaned = validateAndClean(val);
+      const isDigit = /[1-9]/.test(char);
+      const cleaned = validateAndClean(val, isDigit);
       input.value = cleaned;
     }
 
